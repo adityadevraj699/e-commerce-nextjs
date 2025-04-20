@@ -9,6 +9,11 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
+// Convert Timestamp to milliseconds
+const getTimestampInMilliseconds = () => {
+  return Timestamp.now().seconds * 1000;
+};
+
 export const createNewAdmin = async ({ data, image }) => {
   if (!image) {
     throw new Error("Image is Required");
@@ -20,18 +25,22 @@ export const createNewAdmin = async ({ data, image }) => {
     throw new Error("Email is required");
   }
 
-  const newId = data?.email;
+  const newId = data?.email; // Using email as ID
 
-  const imageRef = ref(storage, `admins/${newId}`);
-  await uploadBytes(imageRef, image);
-  const imageURL = await getDownloadURL(imageRef);
+  try {
+    const imageRef = ref(storage, `admins/${newId}`);
+    await uploadBytes(imageRef, image);
+    const imageURL = await getDownloadURL(imageRef);
 
-  await setDoc(doc(db, `admins/${newId}`), {
-    ...data,
-    id: newId,
-    imageURL: imageURL,
-    timestampCreate: Timestamp.now(),
-  });
+    await setDoc(doc(db, `admins/${newId}`), {
+      ...data,
+      id: newId,
+      imageURL: imageURL,
+      timestampCreate: getTimestampInMilliseconds(),
+    });
+  } catch (error) {
+    throw new Error("Error creating admin: " + error.message);
+  }
 };
 
 export const updateAdmin = async ({ data, image }) => {
@@ -49,29 +58,33 @@ export const updateAdmin = async ({ data, image }) => {
 
   let imageURL = data?.imageURL;
 
-  if (image) {
-    const imageRef = ref(storage, `admins/${id}`);
-    await uploadBytes(imageRef, image);
-    imageURL = await getDownloadURL(imageRef);
-  }
+  try {
+    if (image) {
+      const imageRef = ref(storage, `admins/${id}`);
+      await uploadBytes(imageRef, image);
+      imageURL = await getDownloadURL(imageRef);
+    }
 
-  if (id === data?.email) {
-    await updateDoc(doc(db, `admins/${id}`), {
-      ...data,
-      imageURL: imageURL,
-      timestampUpdate: Timestamp.now(),
-    });
-  } else {
-    const newId = data?.email;
+    // If ID and email match, update the document, else replace with new ID
+    if (id === data?.email) {
+      await updateDoc(doc(db, `admins/${id}`), {
+        ...data,
+        imageURL: imageURL,
+        timestampUpdate: getTimestampInMilliseconds(),
+      });
+    } else {
+      const newId = data?.email;
+      await deleteDoc(doc(db, `admins/${id}`));
 
-    await deleteDoc(doc(db, `admins/${id}`));
-
-    await setDoc(doc(db, `admins/${newId}`), {
-      ...data,
-      id: newId,
-      imageURL: imageURL,
-      timestampUpdate: Timestamp.now(),
-    });
+      await setDoc(doc(db, `admins/${newId}`), {
+        ...data,
+        id: newId,
+        imageURL: imageURL,
+        timestampUpdate: getTimestampInMilliseconds(),
+      });
+    }
+  } catch (error) {
+    throw new Error("Error updating admin: " + error.message);
   }
 };
 
@@ -79,5 +92,9 @@ export const deleteAdmin = async ({ id }) => {
   if (!id) {
     throw new Error("ID is required");
   }
-  await deleteDoc(doc(db, `admins/${id}`));
+  try {
+    await deleteDoc(doc(db, `admins/${id}`));
+  } catch (error) {
+    throw new Error("Error deleting admin: " + error.message);
+  }
 };
