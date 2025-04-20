@@ -21,12 +21,12 @@ This is a Full Stack E-Commerce Website built with **Next.js 14**, **Tailwind CS
 
 1. Clone the repository:
    ```bash
-   git clone <[repository-url](https://github.com/adityadevraj699/e-commerce-nextjs)>
+   git clone [repository-url](https://github.com/adityadevraj699/e-commerce-nextjs)
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd <project-directory>
+   cd e-commerce-nextjs
    ```
 
 3. Install the dependencies:
