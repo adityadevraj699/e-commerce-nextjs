@@ -21,12 +21,12 @@ This is a Full Stack E-Commerce Website built with **Next.js 14**, **Tailwind CS
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone [repository-url](https://github.com/adityadevraj699/e-commerce-nextjs)
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd <project-directory>
+   cd e-commerce-nextjs
    ```
 
 3. Install the dependencies:
@@ -139,16 +139,7 @@ service firebase.storage {
 }
 ```
 
-## Demo
 
-You can explore the demo of the e-commerce website at [this link](https://docs-reader-store.vercel.app). 
-
-To access the Admin Panel, use the following credentials:
-
-- **Email**: admin@gmail.com
-- **Password**: iloveyou
-
-(Note: This demo admin account has read and write permissions disabled for security purposes.)
 
 ## Conclusion
 
